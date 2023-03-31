@@ -1,5 +1,7 @@
 import { Task } from "./Task";
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { LoadingRow } from "./LoadingRow";
 import { styles } from "./styles";
 
 export const TaskList = ({
@@ -15,8 +17,13 @@ export const TaskList = ({
 
   if (loading) {
     return (
-      <View style={styles.listItems}>
-        <Text>Loading</Text>
+      <View style={[styles.listItems, { justifyContent: "center" }]}>
+        <LoadingRow />
+        <LoadingRow />
+        <LoadingRow />        
+        <LoadingRow />
+        <LoadingRow />
+        <LoadingRow />        
       </View>
     );
   }
@@ -24,15 +31,24 @@ export const TaskList = ({
   if (tasks.length === 0) {
     return (
       <View style={styles.listItems}>
-        <Text>Empty</Text>
+        <View style={styles.wrapperMessage}>
+          <MaterialIcons name="check" size={64} color={"#2cc5d2"} />
+          <Text style={styles.titleMessage}>You have no tasks</Text>
+          <Text style={styles.subtitleMessage}>Sit back and relax</Text>
+        </View>
       </View>
     );
   }
 
+  const tasksInOrder = [
+    ...tasks.filter((t) => t.state === "TASK_PINNED"),
+    ...tasks.filter((t) => t.state !== "TASK_PINNED"),
+  ];
+
   return (
     <View style={styles.listItems}>
       <FlatList
-        data={tasks}
+        data={tasksInOrder}
         keyExtractor={(task) => task.id}
         renderItem={({ item }) => <Task task={item} {...events} />}
       />
